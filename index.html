@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pruebaris - Inicio</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="login-page">
+    <!-- Imagen de fondo - REEMPLAZAR CON TU IMAGEN -->
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <div class="login-box">
+            <div class="logo">
+                <h1>🎮 PRUEBARIS</h1>
+                <p class="subtitle">Aprende programación jugando</p>
+            </div>
+
+            <!-- Pantalla principal -->
+            <div id="mainScreen" class="screen active">
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="showCreateAccount()">
+                        <span class="icon">✨</span>
+                        Crear Cuenta
+                    </button>
+                    <button class="btn btn-secondary" onclick="showLoadAccount()">
+                        <span class="icon">📁</span>
+                        Cargar Cuenta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pantalla crear cuenta -->
+            <div id="createScreen" class="screen">
+                <h2>Crear Nueva Cuenta</h2>
+                <div class="form-group">
+                    <label for="username">Nombre de Usuario</label>
+                    <input type="text" id="username" placeholder="Ingresa tu nombre" maxlength="20">
+                </div>
+
+                <div class="avatar-section">
+                    <label>Elige tu Avatar</label>
+                    <div class="avatar-grid" id="avatarGrid"></div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="createAccount()">
+                        <span class="icon">🚀</span>
+                        Comenzar
+                    </button>
+                    <button class="btn btn-back" onclick="showMainScreen()">
+                        Volver
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pantalla cargar cuenta -->
+            <div id="loadScreen" class="screen">
+                <h2>Cargar Cuenta</h2>
+                <div class="file-upload">
+                    <label for="fileInput" class="file-label">
+                        <span class="icon">📄</span>
+                        Selecciona tu archivo JSON
+                    </label>
+                    <input type="file" id="fileInput" accept=".json" onchange="loadAccount(event)">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-back" onclick="showMainScreen()">
+                        Volver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Avatares generados con dicebear API (avatares de estilo pixel-art gamer)
+        const avatarStyles = [
+            'adventurer', 'adventurer-neutral', 'avataaars', 'big-ears',
+            'big-smile', 'bottts', 'croodles', 'fun-emoji',
+            'icons', 'identicon', 'lorelei', 'micah',
+            'miniavs', 'open-peeps', 'personas', 'pixel-art',
+            'shapes', 'thumbs', 'bottts-neutral', 'initials'
+        ];
+
+        let selectedAvatar = null;
+
+        // Generar grid de avatares
+        function generateAvatars() {
+            const grid = document.getElementById('avatarGrid');
+            grid.innerHTML = '';
+            
+            avatarStyles.forEach((style, index) => {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar-item';
+                avatarDiv.onclick = () => selectAvatar(index);
+                
+                const seed = `avatar${index}`;
+                avatarDiv.innerHTML = `<img src="https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7" alt="Avatar ${index}">`;
+                
+                grid.appendChild(avatarDiv);
+            });
+        }
+
+        function selectAvatar(index) {
+            document.querySelectorAll('.avatar-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            selectedAvatar = index;
+        }
+
+        function showMainScreen() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('mainScreen').classList.add('active');
+        }
+
+        function showCreateAccount() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('createScreen').classList.add('active');
+            generateAvatars();
+        }
+
+        function showLoadAccount() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('loadScreen').classList.add('active');
+        }
+
+        function createAccount() {
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                alert('Por favor ingresa un nombre de usuario');
+                return;
+            }
+            
+            if (selectedAvatar === null) {
+                alert('Por favor selecciona un avatar');
+                return;
+            }
+
+            // Crear perfil
+            const profile = {
+                username: username,
+                avatar: selectedAvatar,
+                avatarStyle: avatarStyles[selectedAvatar],
+                createdAt: new Date().toISOString(),
+                stats: {
+                    totalGames: 0,
+                    normalGames: 0,
+                    infiniteGames: 0,
+                    totalPoints: 0,
+                    bestScoreNormal: 0,
+                    bestScoreInfinite: 0,
+                    totalCorrect: 0,
+                    totalWrong: 0
+                },
+                achievements: []
+            };
+
+            // Guardar en localStorage
+            localStorage.setItem('pruebaris_profile', JSON.stringify(profile));
+
+            // Descargar JSON automáticamente
+            downloadProfile(profile);
+
+            // Redirigir al juego
+            window.location.href = 'Pruebaris.html';
+        }
+
+        function loadAccount(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const profile = JSON.parse(e.target.result);
+                    
+                    // Validar estructura básica
+                    if (!profile.username || !profile.stats) {
+                        alert('Archivo JSON inválido');
+                        return;
+                    }
+
+                    // Guardar en localStorage
+                    localStorage.setItem('pruebaris_profile', JSON.stringify(profile));
+                    
+                    // Redirigir al juego
+                    window.location.href = 'Pruebaris.html';
+                } catch (error) {
+                    alert('Error al cargar el archivo. Asegúrate de que sea un JSON válido de Pruebaris.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadProfile(profile) {
+            const dataStr = JSON.stringify(profile, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `pruebaris_${profile.username}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

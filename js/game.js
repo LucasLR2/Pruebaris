@@ -109,14 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeAvatars() {
-    const avatarStyles = [
-        'adventurer', 'adventurer-neutral', 'avataaars', 'big-ears',
-        'big-smile', 'bottts', 'croodles', 'fun-emoji',
-        'icons', 'identicon', 'lorelei', 'micah',
-        'miniavs', 'open-peeps', 'personas', 'pixel-art',
-        'shapes', 'thumbs', 'bottts-neutral', 'initials'
-    ];
-    window.avatarStyles = avatarStyles;
+    const avatarCount = 10; // Ahora tenemos 10 avatares locales
+    window.avatarStyles = Array.from({length: avatarCount}, (_, i) => i + 1);
 }
 
 function loadProfile() {
@@ -139,8 +133,8 @@ function loadProfile() {
 
 function updateProfileUI() {
     const seed = `avatar${profile.avatar}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/${profile.avatarStyle}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7`;
-    
+    const avatarUrl = `resources/avatars/Avatar-${profile.avatar}.png`;
+
     document.getElementById('profileAvatar').src = avatarUrl;
     document.getElementById('profileName').textContent = profile.username;
     document.getElementById('bestNormal').textContent = profile.stats.bestScoreNormal;
@@ -439,7 +433,7 @@ function showProfile() {
     
     // Cargar datos actuales
     const seed = `avatar${profile.avatar}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/${profile.avatarStyle}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7`;
+    const avatarUrl = `resources/avatars/Avatar-${profile.avatar}.png`;
     
     document.getElementById('editProfileAvatar').src = avatarUrl;
     document.getElementById('editProfileName').textContent = profile.username;
@@ -475,8 +469,7 @@ function generateEditAvatars() {
         
         avatarDiv.onclick = () => selectEditAvatar(index, avatarDiv);
 
-        const seed = `avatar${index}`;
-        avatarDiv.innerHTML = `<img src="https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7" alt="Avatar ${index}">`;
+        avatarDiv.innerHTML = `<img src="resources/avatars/Avatar-${index + 1}.png" alt="Avatar ${index + 1}">`;
 
         grid.appendChild(avatarDiv);
     });
@@ -489,9 +482,8 @@ function selectEditAvatar(index, element) {
     element.classList.add('selected');
     selectedEditAvatar = index;
     
-    // Actualizar preview
-    const seed = `avatar${index}`;
-    const avatarUrl = `https://api.dicebear.com/7.x/${window.avatarStyles[index]}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7`;
+    const avatarUrl = `resources/avatars/Avatar-${index + 1}.png`;
+    
     document.getElementById('editProfileAvatar').src = avatarUrl;
 }
 
@@ -507,8 +499,7 @@ function saveProfileChanges() {
     profile.username = newUsername;
     
     if (selectedEditAvatar !== null) {
-        profile.avatar = selectedEditAvatar;
-        profile.avatarStyle = window.avatarStyles[selectedEditAvatar];
+        profile.avatar = selectedEditAvatar + 1;
     }
     
     // Guardar en localStorage

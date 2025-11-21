@@ -82,13 +82,7 @@
     </div>
 
     <script>
-        const avatarStyles = [
-            'adventurer', 'adventurer-neutral', 'avataaars', 'big-ears',
-            'big-smile', 'bottts', 'croodles', 'fun-emoji',
-            'icons', 'identicon', 'lorelei', 'micah',
-            'miniavs', 'open-peeps', 'personas', 'pixel-art',
-            'shapes', 'thumbs', 'bottts-neutral', 'initials'
-        ];
+        const avatarCount = 10;
 
         let selectedAvatar = null;
 
@@ -96,16 +90,15 @@
             const grid = document.getElementById('avatarGrid');
             grid.innerHTML = '';
 
-            avatarStyles.forEach((style, index) => {
+            for (let i = 1; i <= avatarCount; i++) {
                 const avatarDiv = document.createElement('div');
                 avatarDiv.className = 'avatar-item';
-                avatarDiv.onclick = () => selectAvatar(index, avatarDiv);
+                avatarDiv.onclick = () => selectAvatar(i, avatarDiv);
 
-                const seed = `avatar${index}`;
-                avatarDiv.innerHTML = `<img src="https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7" alt="Avatar ${index}">`;
+                avatarDiv.innerHTML = `<img src="resources/avatars/Avatar-${i}.png" alt="Avatar ${i}">`;
 
                 grid.appendChild(avatarDiv);
-            });
+            }
         }
 
         function selectAvatar(index, element) {
@@ -149,7 +142,6 @@
             const profile = {
                 username: username,
                 avatar: selectedAvatar,
-                avatarStyle: avatarStyles[selectedAvatar],
                 createdAt: new Date().toISOString(),
                 stats: {
                     totalGames: 0,

@@ -199,10 +199,12 @@ function startGame(mode) {
         // Modo normal: todas las 70 preguntas en orden aleatorio
         currentQuestions = shuffleArray([...questions]);
         currentQuestionIndex = 0;
+        document.getElementById('endInfiniteBtn').style.display = 'none';
     } else {
         // Modo infinito: preguntas aleatorias infinitas
         currentQuestions = [];
         currentQuestionIndex = 0;
+        document.getElementById('endInfiniteBtn').style.display = 'block';
     }
     
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -518,4 +520,10 @@ function saveProfileChanges() {
 function cancelProfileEdit() {
     selectedEditAvatar = null;
     showMainDashboard();
+}
+
+function confirmEndInfinite() {
+    if (confirm('¿Estás seguro de terminar la partida? Se guardarán tus puntos actuales.')) {
+        endGame();
+    }
 }

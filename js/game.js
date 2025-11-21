@@ -9,8 +9,8 @@ const questions = [
     { q: "¿Cuál de las siguientes opciones describe mejor el polimorfismo?", options: ["La capacidad de un objeto de tener múltiples formas", "La capacidad de una clase de tener múltiples constructores", "La capacidad de una función de retornar diferentes tipos de datos", "La capacidad de una variable de cambiar de tipo en tiempo de ejecución", "La capacidad de un método de acceder a variables privadas", "La capacidad de una clase de tener múltiples padres"], correct: 0 },
     { q: "¿Qué es la herencia múltiple?", options: ["Cuando una clase hereda de varias interfaces", "Cuando una clase hereda de varias clases", "Cuando una clase implementa varios métodos", "Cuando una clase tiene varios constructores", "Cuando una clase tiene varias instancias", "Cuando una clase tiene varios atributos"], correct: 1 },
     { q: "¿Cuál es la diferencia entre una clase abstracta y una interfaz?", options: ["Una clase abstracta puede tener métodos implementados, una interfaz no", "Una interfaz puede tener atributos privados, una clase abstracta no", "Una clase abstracta no puede ser heredada, una interfaz sí", "Una interfaz puede tener constructores, una clase abstracta no", "Una clase abstracta solo puede tener métodos estáticos", "No hay diferencia"], correct: 0 },
-    { q: "¿Qué sucede si una clase hija sobrescribe un método de la clase padre?", options: ["El método de la clase padre nunca se ejecuta", "El método de la clase hija reemplaza al de la clase padre al ser llamado desde la hija", "Ambos métodos se ejecutan en orden de declaración", "El método de la clase padre se ejecuta primero y luego el de la hija", "El método de la clase hija solo puede ser llamado desde la clase padre", "El método de la clase hija debe ser privado"], correct: 4 },
-    { q: "¿Cuál de las siguientes afirmaciones sobre constructores es correcta?", options: ["Un constructor puede ser llamado explícitamente como cualquier otro método", "Una clase puede tener múltiples constructores con diferentes parámetros", "Un constructor puede retornar valores", "Un constructor debe ser siempre público", "Un constructor puede ser estático", "Un constructor no puede tener parámetros"], correct: 4 },
+    { q: "¿Qué sucede si una clase hija sobrescribe un método de la clase padre?", options: ["El método de la clase padre nunca se ejecuta", "El método de la clase hija reemplaza al de la clase padre al ser llamado desde la hija", "Ambos métodos se ejecutan en orden de declaración", "El método de la clase padre se ejecuta primero y luego el de la hija", "El método de la clase hija solo puede ser llamado desde la clase padre", "El método de la clase hija debe ser privado"], correct: 1 },
+    { q: "¿Cuál de las siguientes afirmaciones sobre constructores es correcta?", options: ["Un constructor puede ser llamado explícitamente como cualquier otro método", "Una clase puede tener múltiples constructores con diferentes parámetros", "Un constructor puede retornar valores", "Un constructor debe ser siempre público", "Un constructor puede ser estático", "Un constructor no puede tener parámetros"], correct: 1 },
     { q: "¿Cuál de las siguientes es una estructura LIFO?", options: ["Cola", "Pila", "Lista enlazada", "Árbol binario", "HashMap", "Array"], correct: 1 },
     { q: "¿Cuál de las siguientes sentencias accede al primer elemento de un array llamado TestArray en Java?", options: ["TestArray[0]", "TestArray[1]", "TestArray.first()", "TestArray.get(0)", "TestArray.firstElement()", "TestArray['0']"], correct: 0 },
     { q: "Considere un Array llamado TestArray de tamaño 4. ¿Cuál es el resultado de la operación TestArray[4] = null;?", options: ["El valor del último elemento se vuelve null", "Se produce un error de índice fuera de rango", "El array se expande automáticamente", "El primer elemento se elimina", "El array se vacía", "No ocurre ningún cambio"], correct: 1 },
@@ -101,6 +101,11 @@ let maxStreak = 0;
 document.addEventListener('DOMContentLoaded', function() {
     loadProfile();
     initializeAvatars();
+    
+    // Inicializar iconos de Lucide después de cargar el DOM
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 });
 
 function initializeAvatars() {
@@ -125,9 +130,11 @@ function loadProfile() {
     
     // Inicializar campos si no existen
     if (!profile.stats.maxStreak) profile.stats.maxStreak = 0;
+    if (!profile.stats.normalGames) profile.stats.normalGames = 0;
+    if (!profile.stats.infiniteGames) profile.stats.infiniteGames = 0;
     
     updateProfileUI();
-    updateAchievementsList();
+    updateDashboard();
 }
 
 function updateProfileUI() {
@@ -136,20 +143,51 @@ function updateProfileUI() {
     
     document.getElementById('profileAvatar').src = avatarUrl;
     document.getElementById('profileName').textContent = profile.username;
-    document.getElementById('totalPoints').textContent = profile.stats.totalPoints;
     document.getElementById('bestNormal').textContent = profile.stats.bestScoreNormal;
     document.getElementById('bestInfinite').textContent = profile.stats.bestScoreInfinite;
-    
-    // Stats del menú
-    document.getElementById('statTotalGames').textContent = profile.stats.totalGames;
-    document.getElementById('statTotalPoints').textContent = profile.stats.totalPoints;
-    document.getElementById('statCorrect').textContent = profile.stats.totalCorrect;
-    document.getElementById('statWrong').textContent = profile.stats.totalWrong;
 }
 
-function showModeScreen() {
+function updateDashboard() {
+    // Actualizar estadísticas del dashboard
+    document.getElementById('dashTotalGames').textContent = profile.stats.totalGames;
+    document.getElementById('dashTotalPoints').textContent = profile.stats.totalPoints;
+    document.getElementById('dashCorrect').textContent = profile.stats.totalCorrect;
+    document.getElementById('dashWrong').textContent = profile.stats.totalWrong;
+    
+    // Actualizar logros
+    const unlockedCount = profile.achievements.length;
+    document.getElementById('dashAchievementCount').textContent = unlockedCount;
+    
+    updateAchievementsDashboard();
+    
+    // Re-inicializar iconos de Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function updateAchievementsDashboard() {
+    const list = document.getElementById('dashAchievementsList');
+    list.innerHTML = '';
+    
+    achievements.forEach(achievement => {
+        const isUnlocked = profile.achievements.includes(achievement.id);
+        
+        const div = document.createElement('div');
+        div.className = `achievement-item ${isUnlocked ? 'unlocked' : ''}`;
+        div.innerHTML = `
+            <div class="achievement-icon">${achievement.icon}</div>
+            <div class="achievement-name">${achievement.name}</div>
+            <div class="achievement-desc">${achievement.desc}</div>
+        `;
+        list.appendChild(div);
+    });
+}
+
+function showMainDashboard() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('modeScreen').classList.add('active');
+    document.getElementById('mainDashboard').classList.add('active');
+    updateDashboard();
 }
 
 function startGame(mode) {
@@ -177,6 +215,11 @@ function startGame(mode) {
     badge.style.background = mode === 'normal' ? 'var(--primary)' : 'var(--warning)';
     
     showNextQuestion();
+    
+    // Re-inicializar iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 function showNextQuestion() {
@@ -298,6 +341,11 @@ function endGame() {
     
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('resultsScreen').classList.add('active');
+    
+    // Re-inicializar iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 function checkAchievements() {
@@ -329,38 +377,17 @@ function checkAchievements() {
         });
     }
     
-    updateAchievementsList();
     localStorage.setItem('pruebaris_profile', JSON.stringify(profile));
-}
-
-function updateAchievementsList() {
-    const list = document.getElementById('achievementsList');
-    list.innerHTML = '';
-    
-    const unlockedCount = profile.achievements.length;
-    document.getElementById('achievementCount').textContent = unlockedCount;
-    
-    achievements.forEach(achievement => {
-        const isUnlocked = profile.achievements.includes(achievement.id);
-        
-        const div = document.createElement('div');
-        div.className = `achievement-item ${isUnlocked ? 'unlocked' : ''}`;
-        div.innerHTML = `
-            <div class="achievement-icon">${achievement.icon}</div>
-            <div class="achievement-info">
-                <div class="achievement-name">${achievement.name}</div>
-                <div class="achievement-desc">${achievement.desc}</div>
-            </div>
-        `;
-        list.appendChild(div);
-    });
 }
 
 function showMenu() {
     document.getElementById('menuOverlay').classList.add('active');
     document.getElementById('sideMenu').classList.add('active');
-    updateProfileUI();
-    updateAchievementsList();
+    
+    // Re-inicializar iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }
 
 function closeMenu() {
@@ -379,6 +406,7 @@ function exportProfile() {
     URL.revokeObjectURL(url);
     
     alert('¡Perfil exportado exitosamente! 💾');
+    closeMenu();
 }
 
 function logout() {
@@ -395,4 +423,9 @@ function shuffleArray(array) {
         [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
     return newArray;
+}
+
+function showProfile() {
+    alert('Función de Perfil - Próximamente');
+    // Aquí agregarás la lógica del perfil en el futuro
 }

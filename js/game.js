@@ -187,10 +187,14 @@ function updateAchievementsDashboard() {
 function showMainDashboard() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('mainDashboard').classList.add('active');
+    
+    // Mostrar perfil flotante
+    document.querySelector('.floating-profile').style.display = 'flex';
+    
     updateDashboard();
 }
-
 function startGame(mode) {
+    
     currentMode = mode;
     currentScore = 0;
     correctCount = 0;
@@ -426,6 +430,101 @@ function shuffleArray(array) {
 }
 
 function showProfile() {
-    alert('Función de Perfil - Próximamente');
-    // Aquí agregarás la lógica del perfil en el futuro
+    // Mostrar pantalla de editar perfil
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('profileScreen').classList.add('active');
+
+    // Ocultar perfil flotante
+    document.querySelector('.floating-profile').style.display = 'none';
+    
+    // Cargar datos actuales
+    const seed = `avatar${profile.avatar}`;
+    const avatarUrl = `https://api.dicebear.com/7.x/${profile.avatarStyle}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7`;
+    
+    document.getElementById('editProfileAvatar').src = avatarUrl;
+    document.getElementById('editProfileName').textContent = profile.username;
+    document.getElementById('editUsername').value = profile.username;
+    
+    // Generar avatares
+    generateEditAvatars();
+    
+    // Cerrar menú
+    closeMenu();
+    
+    // Re-inicializar iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+let selectedEditAvatar = null;
+
+function generateEditAvatars() {
+    const grid = document.getElementById('editAvatarGrid');
+    grid.innerHTML = '';
+
+    window.avatarStyles.forEach((style, index) => {
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'avatar-item';
+        
+        // Marcar el avatar actual como seleccionado
+        if (index === profile.avatar) {
+            avatarDiv.classList.add('selected');
+            selectedEditAvatar = index;
+        }
+        
+        avatarDiv.onclick = () => selectEditAvatar(index, avatarDiv);
+
+        const seed = `avatar${index}`;
+        avatarDiv.innerHTML = `<img src="https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7" alt="Avatar ${index}">`;
+
+        grid.appendChild(avatarDiv);
+    });
+}
+
+function selectEditAvatar(index, element) {
+    document.querySelectorAll('#editAvatarGrid .avatar-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    element.classList.add('selected');
+    selectedEditAvatar = index;
+    
+    // Actualizar preview
+    const seed = `avatar${index}`;
+    const avatarUrl = `https://api.dicebear.com/7.x/${window.avatarStyles[index]}/svg?seed=${seed}&backgroundColor=0a5b83,1c799f,69d2e7`;
+    document.getElementById('editProfileAvatar').src = avatarUrl;
+}
+
+function saveProfileChanges() {
+    const newUsername = document.getElementById('editUsername').value.trim();
+    
+    if (!newUsername) {
+        alert('Por favor ingresa un nombre de usuario');
+        return;
+    }
+    
+    // Actualizar perfil
+    profile.username = newUsername;
+    
+    if (selectedEditAvatar !== null) {
+        profile.avatar = selectedEditAvatar;
+        profile.avatarStyle = window.avatarStyles[selectedEditAvatar];
+    }
+    
+    // Guardar en localStorage
+    localStorage.setItem('pruebaris_profile', JSON.stringify(profile));
+    
+    // Actualizar UI
+    updateProfileUI();
+    updateDashboard();
+    
+    // Volver al dashboard
+    showMainDashboard();
+    
+    alert('¡Perfil actualizado exitosamente! ✅');
+}
+
+function cancelProfileEdit() {
+    selectedEditAvatar = null;
+    showMainDashboard();
 }

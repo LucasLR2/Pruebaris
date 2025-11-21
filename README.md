@@ -82,15 +82,7 @@ Pruebaris/
 ├── js/
 │   └── game.js             # Lógica del juego y sistema de preguntas
 │
-└── resources/
-    ├── Login.png           # Imagen de fondo
-    ├── Logo-sf.png         # Logo del proyecto
-    ├── diamond-sf.png      # Favicon del proyecto
-    ├── README.png          # Captura para documentación
-    └── avatars/            # Carpeta con 10 avatares
-        ├── Avatar-1.png
-        ├── Avatar-2.png
-        └── ...
+└── resources/              # Recursos
 ```
 
 ---
@@ -287,7 +279,7 @@ Gracias a todos los que prueben, usen y contribuyan a mejorar Pruebaris. Este pr
 
 **Versión:** 1.2 (Completa)  
 **Estado:** ✅ 100% Funcional  
-**Última actualización:** 2024  
+**Última actualización:** 2025
 **Demo en vivo:** [https://lucaslr2.github.io/Pruebaris/](https://lucaslr2.github.io/Pruebaris/)
 
 ---

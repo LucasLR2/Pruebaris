@@ -28,6 +28,12 @@
             </a>
         </div>
 
+        <!-- Perfil móvil (solo visible en móvil) -->
+        <div class="mobile-profile">
+            <img id="mobileProfileAvatar" class="mobile-profile-avatar" src="" alt="Avatar">
+            <span id="mobileProfileName" class="mobile-profile-name">Usuario</span>
+        </div>
+
         <button class="btn btn-primary btn-small" onclick="showMenu()">
             <i data-lucide="menu"></i>
             Menú
@@ -189,6 +195,44 @@
             </div>
 
             <div class="menu-content">
+                <!-- Estadísticas en el menú -->
+                <div class="menu-section">
+                    <h3><i data-lucide="bar-chart-3"></i> Estadísticas</h3>
+                    <div class="menu-stats">
+                        <div class="menu-stat-item">
+                            <span class="menu-stat-label">Partidas Jugadas</span>
+                            <span class="menu-stat-value" id="menuTotalGames">0</span>
+                        </div>
+                        <div class="menu-stat-item">
+                            <span class="menu-stat-label">Puntos Totales</span>
+                            <span class="menu-stat-value" id="menuTotalPoints">0</span>
+                        </div>
+                        <div class="menu-stat-item">
+                            <span class="menu-stat-label">Correctas</span>
+                            <span class="menu-stat-value success" id="menuCorrect">0</span>
+                        </div>
+                        <div class="menu-stat-item">
+                            <span class="menu-stat-label">Incorrectas</span>
+                            <span class="menu-stat-value danger" id="menuWrong">0</span>
+                        </div>
+                        <div class="menu-stat-item">
+                            <span class="menu-stat-label">Mejor Normal</span>
+                            <span class="menu-stat-value" id="menuBestNormal">0</span>
+                        </div>
+                        <div class="menu-stat-item">
+                            <span class="menu-stat-label">Mejor Infinito</span>
+                            <span class="menu-stat-value" id="menuBestInfinite">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logros en el menú -->
+                <div class="menu-section">
+                    <h3><i data-lucide="trophy"></i> Logros (<span id="menuAchievementCount">0</span>/10)</h3>
+                    <div class="menu-achievements" id="menuAchievementsList"></div>
+                </div>
+
+                <!-- Botones de acción -->
                 <div class="menu-section">
                     <button class="btn btn-primary full-width" onclick="showProfile()">
                         <i data-lucide="user"></i>

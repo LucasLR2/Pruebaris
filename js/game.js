@@ -139,6 +139,10 @@ function updateProfileUI() {
     document.getElementById('profileName').textContent = profile.username;
     document.getElementById('bestNormal').textContent = profile.stats.bestScoreNormal;
     document.getElementById('bestInfinite').textContent = profile.stats.bestScoreInfinite;
+
+    // Actualizar perfil móvil
+    document.getElementById('mobileProfileAvatar').src = avatarUrl;
+    document.getElementById('mobileProfileName').textContent = profile.username;
 }
 
 function updateDashboard() {
@@ -384,10 +388,44 @@ function showMenu() {
     document.getElementById('menuOverlay').classList.add('active');
     document.getElementById('sideMenu').classList.add('active');
     
+    // Actualizar estadísticas en el menú
+    document.getElementById('menuTotalGames').textContent = profile.stats.totalGames;
+    document.getElementById('menuTotalPoints').textContent = profile.stats.totalPoints;
+    document.getElementById('menuCorrect').textContent = profile.stats.totalCorrect;
+    document.getElementById('menuWrong').textContent = profile.stats.totalWrong;
+    document.getElementById('menuBestNormal').textContent = profile.stats.bestScoreNormal;
+    document.getElementById('menuBestInfinite').textContent = profile.stats.bestScoreInfinite;
+    
+    // Actualizar logros en el menú
+    const unlockedCount = profile.achievements.length;
+    document.getElementById('menuAchievementCount').textContent = unlockedCount;
+    
+    updateMenuAchievements();
+    
     // Re-inicializar iconos
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
+}
+
+function updateMenuAchievements() {
+    const list = document.getElementById('menuAchievementsList');
+    list.innerHTML = '';
+    
+    achievements.forEach(achievement => {
+        const isUnlocked = profile.achievements.includes(achievement.id);
+        
+        const div = document.createElement('div');
+        div.className = `menu-achievement-item ${isUnlocked ? 'unlocked' : ''}`;
+        div.innerHTML = `
+            <div class="menu-achievement-icon">${achievement.icon}</div>
+            <div class="menu-achievement-info">
+                <div class="menu-achievement-name">${achievement.name}</div>
+                <div class="menu-achievement-desc">${achievement.desc}</div>
+            </div>
+        `;
+        list.appendChild(div);
+    });
 }
 
 function closeMenu() {

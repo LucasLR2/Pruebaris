@@ -998,6 +998,7 @@ body::-webkit-scrollbar {
     padding: 20px;
 }
 
+
 .menu-section {
     margin-bottom: 30px;
 }
@@ -1007,6 +1008,82 @@ body::-webkit-scrollbar {
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--surface-light);
+}
+
+.menu-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.menu-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--surface-light);
+    border-radius: 8px;
+}
+
+.menu-stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.menu-stat-value {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+.menu-stat-value.success {
+    color: var(--success);
+}
+
+.menu-stat-value.danger {
+    color: var(--danger);
+}
+
+.menu-achievements {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.menu-achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--surface-light);
+    border-radius: 8px;
+    opacity: 0.4;
+}
+
+.menu-achievement-item.unlocked {
+    opacity: 1;
+    border-left: 3px solid var(--warning);
+}
+
+.menu-achievement-icon {
+    font-size: 1.5em;
+}
+
+.menu-achievement-info {
+    flex: 1;
+}
+
+.menu-achievement-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.9em;
+}
+
+.menu-achievement-desc {
+    font-size: 0.75em;
+    color: var(--text-secondary);
 }
 
 /* Profile Edit Screen */
@@ -1061,6 +1138,10 @@ body::-webkit-scrollbar {
     color: var(--primary);
     font-family: 'Audiowide', sans-serif;
     margin: 0;
+}
+
+.mobile-profile {
+    display: none;
 }
 
 /* Responsive */
@@ -1122,5 +1203,52 @@ body::-webkit-scrollbar {
 
     .side-menu {
         width: 100%;
+    }
+
+    /* Ocultar logo en móvil */
+    .header-logo {
+        display: none !important;
+    }
+    
+    /* Ocultar perfil flotante en móvil */
+    .floating-profile {
+        display: none !important;
+    }
+    
+    /* Mostrar perfil en el header en móvil */
+    .game-header {
+        justify-content: space-between;
+        padding: 10px 20px;
+    }
+    
+    .mobile-profile {
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .mobile-profile-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+    }
+    
+    .mobile-profile-name {
+        font-size: 1.1em;
+        color: var(--primary);
+        font-weight: 600;
+        font-family: 'Audiowide', sans-serif;
+    }
+
+    /* Ocultar estadísticas y logros en móvil del dashboard principal */
+    #mainDashboard .dashboard-section:nth-child(1),
+    #mainDashboard .dashboard-section:nth-child(2) {
+        display: none;
+    }
+    
+    /* Asegurar que solo se vean los modos de juego */
+    #mainDashboard .dashboard-section:nth-child(3) {
+        margin-top: 0;
     }
 }
